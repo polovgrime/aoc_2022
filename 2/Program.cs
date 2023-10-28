@@ -11,7 +11,7 @@
 	{
 		Console.WriteLine("Reading input");
 
-		var allHands = File.ReadAllText("./input.txt").Split("\r\n");
+		var allHands = File.ReadAllText("./input.txt").Split("\n");
 
 		Console.WriteLine("Reading hands");
 
@@ -35,7 +35,7 @@
 
 			scoreFirstPart += (int)yourHand; //your hand
 
-			scoreFirstPart += (int)DecideWin(yourHand, enemyHand);
+			scoreFirstPart += (int)DecideWin(enemyHand, yourHand);
 			
 			yourHand = GetHandByOutcome(enemyHand, splitted[1]);
 			scoreSecondPart += (int)yourHand;
