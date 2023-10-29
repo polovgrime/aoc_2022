@@ -1,38 +1,45 @@
-internal class Crate
+internal class CrateStack
 {
 	public readonly int ID;
 
-	private Stack<string> stacks;
+	private List<string> crates;
 	
-	public Crate(int id, Stack<string> stacks) 
-		: this(id) //i hate this tbh and im not gonna do this again
-			   //i didnt have a need for it i just wanted to feel like an idiot
-	{
-		this.stacks = stacks;
-	}
-
-	public Crate(int id)
+	public CrateStack(int id)
 	{
 		ID = id;
-		this.stacks = new Stack<string>();
+		this.crates = new List<string>();
 	}
 
 	public string Pop()
 	{
-		return stacks.Pop();
+		var crate = crates[crates.Count - 1];
+		crates.RemoveAt(crates.Count - 1);
+		return crate;
 	}
 
 	public void Push(string str)
 	{
-		stacks.Push(str);
+		crates.Add(str);
+	}
+
+	public IEnumerable<string> Take(int count)
+	{
+		var target = crates.Skip(crates.Count - count).Take(count);
+		crates = crates.Take(crates.Count - count).ToList();
+		return target;
+	}
+
+	public void Add(IEnumerable<string> newCrates)
+	{
+		crates.AddRange(newCrates);
 	}
 
 	public override string ToString()
 	{
-		return $"Crate#{ID}: [{string.Join(", ", stacks.ToList())}], stacks count {stacks.Count}";
+		return $"Crate#{ID}: [{string.Join(", ", crates.ToList())}], stacks count {crates.Count}";
 	}
 
-	public static IEnumerable<Crate> ParseCrateStacks(string[] src)
+	public static List<CrateStack> ParseCrateStacks(string[] src)
 	{
 		var linesReversed = src.Reverse();
 		var stackLength = 3;
@@ -41,7 +48,7 @@ internal class Crate
 		var crates = indexLine
 			.Where(e => int.TryParse(e.ToString(), out kostyl))
 			.Select(e => int.Parse(e.ToString()))
-			.Select(e => new Crate(e))
+			.Select(e => new CrateStack(e))
 			.ToList();
 			
 		linesReversed = linesReversed.Skip(1);
@@ -53,7 +60,6 @@ internal class Crate
 				var stack = line.Substring(indexLine.IndexOf(crate.ID.ToString().First()) - 1, stackLength);
 				if (string.IsNullOrWhiteSpace(stack) == false)
 				{
-					Console.WriteLine($"Push [{stack}] to Crate#{crate.ID}");
 					crate.Push(stack);
 				}
 			}
