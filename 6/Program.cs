@@ -1,30 +1,43 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
-var input = File.ReadAllText("./input.txt");
+﻿var input = File.ReadAllText("./input.txt");
 
-char[] buffer = new char[4];
+Console.WriteLine("Package Marker");
+PrintMarker(FindMarker(4));
 
-for (int i = 0; i < input.Length; i++)
+Console.WriteLine("Message Marker");
+PrintMarker(FindMarker(14), 25);
+
+int FindMarker(int distinctCount)
 {
-	buffer = input.FillBuffer(i, buffer.Length);
-	if (buffer.AllCharactersUnique())
-	{
-		var marker = i + buffer.Length;
-		Console.WriteLine($"Index before marker: {marker}");
-		Console.Write($"Place in line here: {input.Substring(marker - 10, 10)}");
-		Console.Write($"_{input[marker]}");
-		if (marker + 11 < input.Length - 1)
-		{
-			Console.Write($"_{input.Substring(marker + 1, 10)}");
-		}
-		else if (marker + 1 < input.Length - 1)
-		{
-			Console.Write($"_{input.Substring(marker + 1, input.Length - marker - 2)}");
-		}
+	char[] buffer = new char[distinctCount];
 
-		break;
+	for (int i = 0; i < input!.Length; i++)
+	{
+		buffer = input.FillBuffer(i, buffer.Length);
+		if (buffer.AllCharactersUnique())
+		{
+			return i + buffer.Length;
+		}
 	}
+	
+	throw new Exception("better luck next time~");
 }
+
+void PrintMarker(int marker, int extraCharactersCount = 10)
+{
+	Console.WriteLine($"Index before marker: {marker}");
+	Console.Write($"Place in line here: {input!.Substring(marker - extraCharactersCount, extraCharactersCount)}");
+	Console.Write($"_{input[marker]}");
+	if (marker + extraCharactersCount + 1 < input.Length - 1)
+	{
+		Console.Write($"_{input.Substring(marker + 1, extraCharactersCount)}");
+	}
+	else if (marker + 1 < input.Length - 1)
+	{
+		Console.Write($"_{input.Substring(marker + 1, input.Length - marker - 2)}");
+	}
+	Console.Write("\n");
+}
+
 
 internal static class TaskEx
 {
