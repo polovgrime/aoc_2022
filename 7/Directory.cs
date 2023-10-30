@@ -33,4 +33,9 @@ internal class Directory
 	{
 		return $"{Parent?.ToString() ?? ""}/{Title}";
 	}
+
+	public Directory? GetSubdirectory(string title)
+	{
+		return directories.FirstOrDefault(e => e.Title == title);
+	}
 }

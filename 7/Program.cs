@@ -10,15 +10,8 @@ foreach (var line in lines)
 	{
 		case Command.List: continue;
 		case Command.MoveIn: 
-			var newDir = directories.FirstOrDefault(e => e.Title == splitted[2]);
-			
-			if (newDir is null)
-			{
-				newDir = new Directory(currentDirectory, splitted[2]);
-				directories.Add(newDir);
-			}
-
-			currentDirectory = newDir;
+			var dir = currentDirectory.GetSubdirectory(splitted[2]) ?? throw new Exception("too bad");
+			currentDirectory = dir;
 			break;
 		case Command.MoveOut:
 			currentDirectory = currentDirectory.Parent ?? rootDirectory;
@@ -27,6 +20,12 @@ foreach (var line in lines)
 			currentDirectory = rootDirectory;
 			break;
 		case Command.Output:
+			if (splitted[0] == "dir" && currentDirectory.GetSubdirectory(splitted[1]) == null)
+			{
+				var newDir = new Directory(currentDirectory, splitted[1]);
+				currentDirectory.Add(newDir);
+				directories.Add(newDir);
+			}
 			if (splitted[0] != "dir")
 			{
 				var newFile = new File(int.Parse(splitted[0]), splitted[1], currentDirectory);
@@ -36,7 +35,7 @@ foreach (var line in lines)
 	}
 }
 var selection = directories
-	.Where(e => e.Size < 100000)
+	.Where(e => e.Size <= 100000)
 	.ToList();
 Console.WriteLine(directories.Sum(e => e.Size));
 //Console.WriteLine(string.Join("\n", selection.Select(e => e.WithFiles).ToList()));
