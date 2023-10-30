@@ -37,10 +37,21 @@ foreach (var line in lines)
 var selection = directories
 	.Where(e => e.Size <= 100000)
 	.ToList();
-Console.WriteLine(directories.Sum(e => e.Size));
-//Console.WriteLine(string.Join("\n", selection.Select(e => e.WithFiles).ToList()));
-Console.WriteLine(selection.Count + " " + selection.Sum(e => e.Size));
-/*Console.WriteLine(directories
-		.Select(e => e.Size)
-		.Where(size => size < 100000)
-		.Sum());*/
+
+Console.WriteLine("Task #1: " + selection.Sum(e => e.Size));
+
+var totalSize = 70000000;
+var totalUsed = rootDirectory.Size;
+var currentFree = totalSize - totalUsed;
+var needFree = 30000000;
+var leftToFree = needFree - currentFree;
+
+Console.WriteLine($"Used: {totalUsed}/{totalSize}. Current free: {currentFree}, leftToFree: {leftToFree}");
+
+var smallestBigEnoughDirectory = directories
+	.Select(e => e.Size)
+	.Where(e => e > leftToFree)
+	.OrderBy(e => e)
+	.First(); 
+
+Console.WriteLine($"Task #2: {smallestBigEnoughDirectory}");
